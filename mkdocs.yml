@@ -48,5 +48,10 @@ nav:
     - FAQ: faq.md
     - Changelog: changelog.md
     - Report Issues: https://github.com/statenandrea33/crimpy/issues
+    - Examples:
+        - examples/intro.ipynb
+        - examples/folium.ipynb
+        - examples/crimpy.ipynb
+        - examples/key_features.ipynb
     - API Reference:
           - crimpy module: crimpy.md
