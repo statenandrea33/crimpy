@@ -6,7 +6,7 @@ import ipyleaflet
 
 class Map(ipyleaflet.Map):
 
-    def __init__(self, zoom, **kwargs) -> None:
+    def __init__(self, center=[20,0], zoom=2, **kwargs) -> None:
         """Adds the ability to use a mouse to zoom in and out.
         
         Args:
@@ -15,7 +15,19 @@ class Map(ipyleaflet.Map):
         if "scroll_wheel_zoom" not in kwargs:
             kwargs["scroll_wheel_zoom"] = True
 
-        super().__init__(zoom=zoom, **kwargs)
+        super().__init__(center=center, zoom=zoom, **kwargs)
+        
+        if "layers_control" not in kwargs:
+            kwargs["layers_control"] = True
+
+        if kwargs["layers_control"]:
+            self.add_layers_control()
+
+        if "fullscreen_control" not in kwargs:
+            kwargs["fullscreen_control"] = True
+
+        if kwargs["fullscreen_control"]:
+            self.add_fullscreen_control()
 
     def add_search_control(self, position="topleft", **kwargs):
         """Add a search control to the map.
@@ -37,6 +49,40 @@ class Map(ipyleaflet.Map):
         """
         draw_control = ipyleaflet.DrawControl(**kwargs)
         self.add_control(draw_control)
+
+    def add_layers_control(self, position='topright'):
+        """Add a layers control to the map.
+
+        Args:
+            **kwargs: Keyword arguments passed to the layers control.
+        """
+        layers_control = ipyleaflet.LayersControl(position=position)
+        self.add_control(layers_control)
+
+    def add_fullscreen_control(self, position='topleft'):
+        """Add a fullscreen control to the map.
+
+        Args:
+            **kwargs: Keyword arguments passed to the fullscreen control.
+        """
+        fullscreen_control = ipyleaflet.FullScreenControl(position=position)
+        self.add_control(fullscreen_control)
+
+    def add_tile_layer(self, url, name, attribution="", **kwargs):
+        """Add a tile layer to the map.
+
+        Args:
+            url (str): The URL of the tile layer.
+            name (str): The name of the tile layer.
+            attribution (str, optional): The attribution of the tile layer. Defaults to "".
+        """
+        tile_layer = ipyleaflet.TileLayer(
+            url=url,
+            name=name,
+            attribution=attribution,
+            **kwargs
+        )
+        self.add_layer(tile_layer)
 
 def add_locations_to_map(m, locations):
     """Takes coordinates from a list called locations and creates points on a map.
