@@ -1,11 +1,11 @@
-"""Main module."""
+"""Folium module."""
 
 import string
 import random
-import ipyleaflet
+import folium
 
-class Map(ipyleaflet.Map):
-# Init Function
+class Map(folium.Map):
+# Init Function    
     def __init__(self, center=[20,0], zoom=2, **kwargs) -> None:
         """Adds the ability to use a mouse to zoom in and out.
         
@@ -39,7 +39,7 @@ class Map(ipyleaflet.Map):
         if "url" not in kwargs:
             kwargs["url"] = "https://nominatim.openstreetmap.org/search?format=json&q={s}"
 
-        search_control = ipyleaflet.SearchControl(position=position, **kwargs)
+        search_control = folium.SearchControl(position=position, **kwargs)
         self.add_control(search_control)
 
 # Add Draw Control Function
@@ -49,7 +49,7 @@ class Map(ipyleaflet.Map):
         Args:
             **kwargs: Keyword arguments passed to the draw control.
         """
-        draw_control = ipyleaflet.DrawControl(**kwargs)
+        draw_control = folium.DrawControl(**kwargs)
         self.add_control(draw_control)
 
 # Add Layers Control Function
@@ -59,31 +59,31 @@ class Map(ipyleaflet.Map):
         Args:
             **kwargs: Keyword arguments passed to the layers control.
         """
-        layers_control = ipyleaflet.LayersControl(position=position)
-        self.add_control(layers_control)
+        layers_control = folium.LayersControl(position=position)
+        self.add_child(layers_control)
 
 # Add Fullscreen Control Function
-    def add_fullscreen_control(self, position='topleft'):
+    def add_fullscreen_control(self, position='topright'):
         """Add a fullscreen control to the map.
 
         Args:
             **kwargs: Keyword arguments passed to the fullscreen control.
         """
-        fullscreen_control = ipyleaflet.FullScreenControl(position=position)
-        self.add_control(fullscreen_control)
+        fullscreen_control = folium.FullscreenControl(position=position)
+        self.add_child(fullscreen_control)
 
 # Add Tile Layer Function
     def add_tile_layer(self, url, name, attribution="", **kwargs):
         """Add a tile layer to the map.
 
         Args:
-            url (str): The URL of the tile layer.
+            url (str): The url of the tile layer.
             name (str): The name of the tile layer.
             attribution (str, optional): The attribution of the tile layer. Defaults to "".
         """
-        tile_layer = ipyleaflet.TileLayer(
-            url=url,
-            name=name,
+        tile_layer = folium.TileLayer(
+            url=url, 
+            name=name, 
             attribution=attribution,
             **kwargs
         )
@@ -91,6 +91,12 @@ class Map(ipyleaflet.Map):
 
 # Basemap Function
     def add_basemap(self, basemap, **kwargs):
+        """Add a basemap to the map.
+        
+        Args:
+            basemap (str): The name of the basemap.
+            **kwargs: Keyword arguments passed to the basemap.
+        """
         
         import xyzservices.providers as xyz
 
@@ -108,31 +114,31 @@ class Map(ipyleaflet.Map):
                 self.add_tile_layer(url, name=basemap.name, attribution=attribution, **kwargs)
             except:
                 raise ValueError(f"{basemap} is not a valid basemap.")
-
-# Add GeoJSON Function          
+            
+# Add GeoJSON Function
     def add_geojson(self, data, name='GeoJSON', **kwargs):
         """Add a GeoJSON layer to the map.
 
         Args:
             data (dict): The GeoJSON data.
-            name (str, optional): The name of the GeoJSON layer. Defaults to 'GeoJSON'.
+            name (str, optional): The name of the GeoJSON. Defaults to 'GeoJSON'.
         """
-
+       
         if isinstance(data, str):
             import json
-            with open(data, "r") as f:
+            with open(data, 'r') as f:
                 data = json.load(f)
 
-        geojson = ipyleaflet.GeoJSON(data=data, name=name, **kwargs)
-        self.add_layer(geojson)
+        geojson = folium.GeoJson(data=data, name=name, **kwargs)
+        self.add_geojson(geojson)
 
 # Add Shapefile Function
     def add_shp(self, data, name='Shapefile', **kwargs):
-        """Add a Shapefile layer to the map.
+        """Add a shapefile layer to the map.
 
         Args:
-            data (str): The path to the Shapefile.
-            name (str, optional): The name of the Shapefile layer. Defaults to 'Shapefile'.
+            data (str): The path to the shapefile.
+            name (str, optional): The name of the shapefile. Defaults to 'Shapefile'.
         """
         import geopandas as gpd
         gdf = gpd.read_file(data)
@@ -141,10 +147,11 @@ class Map(ipyleaflet.Map):
 
 # Add a Vector Function
     def add_vector(self, data, name='Vector', **kwargs):
-        """Add a Vector layer to the map.
+        """Add a vector layer to the map.
 
         Args:
-            data (str): The path to the Vector file.
+            data (str): The path to the vector file.
+            name (str, optional): The name of the vector file. Defaults to 'Vector'.
         """
         import geopandas as gpd
         gdf = gpd.read_file(data)
@@ -152,18 +159,18 @@ class Map(ipyleaflet.Map):
         self.add_geojson(geojson, name=name, **kwargs)
 
 # Add a Raster Function
-    def add_raster(self, url, name='Raster', fit_bounds=True, **kwargs):
+    def add_raster(self, data, name='Raster', fit_bounds=True, **kwargs):
         """Add a raster layer to the map.
         
         Args:
-            url (str): The URL of the raster layer.
+            url (str): The URl of the raster layer.
             name (str, optional): The name of the raster layer. Defaults to 'Raster'.
-            fit_bounds (bool, optional): Whether to fit the map bounds to the raster layer. Defaults to True.
+            fit_bounds (bool, optional): Whether to fit the bounds of the raster layer. Defaults to True.
         """
         import httpx
-        
+
         titiler_endpoint = "https://titiler.xyz"
-        
+
         r = httpx.get(
             f"{titiler_endpoint}/cog/info",
             params = {
@@ -198,7 +205,7 @@ class Map(ipyleaflet.Map):
         """
 
         # Create a marker cluster layer to group nearby markers
-        marker_cluster = ipyleaflet.MarkerCluster()
+        marker_cluster = folium.MarkerCluster()
 
         # Loop through the list of locations and add a marker for each one
         for location in locations:
@@ -206,7 +213,7 @@ class Map(ipyleaflet.Map):
             lat, lon = location['latitude'], location['longitude']
        
             # Create a new marker at the location and add it to the layer
-            marker = ipyleaflet.Marker(location=(lat,lon))
+            marker = folium.Marker(location=(lat,lon))
             self.add_layer(marker)
     
         # Add the marker cluster to the map
