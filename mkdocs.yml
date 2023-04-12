@@ -57,4 +57,4 @@ nav:
         - examples/raster.ipynb
     - API Reference:
           - crimpy module: crimpy.md
-          - folium module: folium.py
+          - folium module: folium.md
