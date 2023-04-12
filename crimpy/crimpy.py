@@ -5,7 +5,7 @@ import random
 import ipyleaflet
 
 class Map(ipyleaflet.Map):
-
+# Init Function
     def __init__(self, center=[20,0], zoom=2, **kwargs) -> None:
         """Adds the ability to use a mouse to zoom in and out.
         
@@ -29,6 +29,7 @@ class Map(ipyleaflet.Map):
         if kwargs["fullscreen_control"]:
             self.add_fullscreen_control()
 
+# Add Search Control Function
     def add_search_control(self, position="topleft", **kwargs):
         """Add a search control to the map.
 
@@ -41,6 +42,7 @@ class Map(ipyleaflet.Map):
         search_control = ipyleaflet.SearchControl(position=position, **kwargs)
         self.add_control(search_control)
 
+# Add Draw Control Function
     def add_draw_control(self, **kwargs):
         """Add a draw control to the map.
         
@@ -50,6 +52,7 @@ class Map(ipyleaflet.Map):
         draw_control = ipyleaflet.DrawControl(**kwargs)
         self.add_control(draw_control)
 
+# Add Layers Control Function
     def add_layers_control(self, position='topright'):
         """Add a layers control to the map.
 
@@ -59,6 +62,7 @@ class Map(ipyleaflet.Map):
         layers_control = ipyleaflet.LayersControl(position=position)
         self.add_control(layers_control)
 
+# Add Fullscreen Control Function
     def add_fullscreen_control(self, position='topleft'):
         """Add a fullscreen control to the map.
 
@@ -68,6 +72,7 @@ class Map(ipyleaflet.Map):
         fullscreen_control = ipyleaflet.FullScreenControl(position=position)
         self.add_control(fullscreen_control)
 
+# Add Tile Layer Function
     def add_tile_layer(self, url, name, attribution="", **kwargs):
         """Add a tile layer to the map.
 
@@ -84,71 +89,132 @@ class Map(ipyleaflet.Map):
         )
         self.add_layer(tile_layer)
 
-def add_locations_to_map(m, locations):
-    """Takes coordinates from a list called locations and creates points on a map.
+# Basemap Function
+    def add_basemap(self, basemap, **kwargs):
+        
+        import xyzservices.providers as xyz
 
-    Parameters:
-        m : The map to add the locations to.
-        locations : A list of locations containing name, latitude, and longitude data. 
-    """
+        if basemap.lower() == "roadmap":
+            url = 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
+        elif basemap.lower() == "satellite":
+            url = 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
+        else:
+            try:
+                basemap = eval(f"xyz.{basemap}")
+                url = basemap.build_url()
+                attribution = basemap.attribution
+                self.add_tile_layer(url, name=basemap.name, attribution=attribution, **kwargs)
+            except:
+                raise ValueError(f"{basemap} is not a valid basemap.")
 
-    # Create a marker cluster layer to group nearby markers
-    marker_cluster = ipyleaflet.MarkerCluster()
+# Add GeoJSON Function          
+    def add_geojson(self, data, name='GeoJSON', **kwargs):
+        """Add a GeoJSON layer to the map.
 
-    # Loop through the list of locations and add a marker for each one
-    for location in locations:
-       # Extract the latitude and longitude from the list
-        lat, lon = location['latitude'], location['longitude']
+        Args:
+            data (dict): The GeoJSON data.
+        """
+
+        if isinstance(data, str):
+            import json
+            with open(data, "r") as f:
+                data = json.load(f)
+
+        geojson = ipyleaflet.GeoJSON(data=data, name=name, **kwargs)
+        self.add_layer(geojson)
+
+# Add Shapefile Function
+    def add_shp(self, data, name='Shapefile', **kwargs):
+        """Add a Shapefile layer to the map.
+
+        Args:
+            data (str): The path to the Shapefile.
+        """
+        import geopandas as gpd
+        gdf = gpd.read_file(data)
+        geojson = gdf.to_json()
+        self.add_geojson(geojson, name=name, **kwargs)
+
+# Add a Vector Function
+    def add_vector(self, data, name='Vector', **kwargs):
+        """Add a Vector layer to the map.
+
+        Args:
+            data (str): The path to the Vector file.
+        """
+        import geopandas as gpd
+        gdf = gpd.read_file(data)
+        geojson = gdf.to_json()
+        self.add_geojson(geojson, name=name, **kwargs)
+
+# Add a Raster Function
+    def add_raster(self, url, name='Raster', fit_bounds=True, **kwargs):
+        """Add a raster layer to the map.
+        
+        Args:
+            url (str): The URL of the raster layer.
+            name (str, optional): The name of the raster layer. Defaults to 'Raster'.
+            fit_bounds (bool, optional): Whether to fit the map bounds to the raster layer. Defaults to True.
+        """
+        import httpx
+        
+        titiler_endpoint = "https://titiler.xyz"
+        
+        r = httpx.get(
+            f"{titiler_endpoint}/cog/info",
+            params = {
+                "url": url,
+            }
+        ).json()
+
+        bounds = r["bounds"]
+
+        r = httpx.get(
+            f"{titiler_endpoint}/cog/tilejson.json",
+            params = {
+            "url": url,
+            }
+        ).json()
+
+        tile = r["tiles"][0]
+
+        self.add_tile_layer(url=tile, name=name, **kwargs)
+
+        if fit_bounds:
+            bbox = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
+            self.fit_bounds(bbox)
+
+# Add Locations to Map Function
+    def add_locations_to_map(self, locations):
+        """Takes coordinates from a list called locations and creates points on a map.
+
+        Args:
+            self : The map to add the locations to.
+            locations : A list of locations containing name, latitude, and longitude data. 
+        """
+
+        # Create a marker cluster layer to group nearby markers
+        marker_cluster = ipyleaflet.MarkerCluster()
+
+        # Loop through the list of locations and add a marker for each one
+        for location in locations:
+            # Extract the latitude and longitude from the list
+            lat, lon = location['latitude'], location['longitude']
        
-        # Create a new marker at the location and add it to the layer
-        marker = ipyleaflet.Marker(location=(lat,lon))
-        m.add_layer(marker)
+            # Create a new marker at the location and add it to the layer
+            marker = ipyleaflet.Marker(location=(lat,lon))
+            self.add_layer(marker)
     
-    # Add the marker cluster to the map
-    m.add_layer(marker_cluster)
+        # Add the marker cluster to the map
+        self.add_layer(marker_cluster)
     
-    # Find the Center of the markers
-    lats = [location['latitude'] for location in locations]
-    lons = [location['longitude'] for location in locations]
-    center_lat = sum(lats) / len(lats)
-    center_lon = sum(lons) / len(lons)
+        # Find the Center of the markers
+        lats = [location['latitude'] for location in locations]
+        lons = [location['longitude'] for location in locations]
+        center_lat = sum(lats) / len(lats)
+        center_lon = sum(lons) / len(lons)
 
-    # Set the center
-    m.center = (center_lat, center_lon)
-
-def generate_random_string(length=10, upper=False, digits=False, punctuation=False):
-    """Generate a random string of a given length.
-        
-    Args:
-        length (int, optional): The length of the string. Defaults to 10.
-        upper (bool, optional): Whether to include uppercase letters. Defaults to False.
-        digits (bool, optional): Whether to include digits. Defaults to False.
-        punctuation (bool, optional): Whether to include punctuation. Defaults to False.
-
-    Returns:
-        str: The generated string.
-    """
-        
-    letters = string.ascii_lowercase
-    if upper:
-        letters += string.ascii_uppercase
-    if digits:
-        letters += string.digits
-    if punctuation:
-        letters += string.punctuation
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
-    
-
-def generate_lucky_number(length=1):
-    """Generate a random number of a given length.
-
-    Args:
-        length (int, optional): The length of the number. Defaults to 1.
-        
-    Returns:
-        int: The generated number.
-    """
-
-    result_str = ''.join(random.choice(string.digits) for i in range(length))
-    return int(result_str)
+        # Set the center
+        self.center = (center_lat, center_lon)
