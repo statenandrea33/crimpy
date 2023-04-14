@@ -1,4 +1,4 @@
 
 # folium module 
 
-::: crimpy.folium
+::: crimpy.foliumap
