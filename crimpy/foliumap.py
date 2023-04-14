@@ -34,3 +34,31 @@ class Map(folium.Map):
             **kwargs
         )
         self.add_child(tile_layer)
+
+# Add GeoJSON Function
+    def add_geojson(self, data, name = 'GeoJSON', **kwargs):
+        """Add a geojson file to the map (folium version).
+
+        Args:
+            data (str): A name of the geojson file.
+            name (str, optional): A layer name of the geojson file to be displayed on the map. Defaults to 'GeoJSON'.
+        """     
+        geojson_layer = folium.GeoJson(
+            data,
+            name=name,
+            **kwargs
+        )
+        self.add_child(geojson_layer)
+
+# Add a Shapefile Function
+    def add_shp(self, data, name='Shapefile', **kwargs):
+        """Add a Shapefile layer to the map.
+
+        Args:
+            data (str): The path to the Shapefile.
+            name (str, optional): The name of the Shapefile layer. Defaults to 'Shapefile'.
+        """
+        import geopandas as gpd
+        gdf = gpd.read_file(data)
+        geojson = gdf.__geo_interface__
+        self.add_geojson(geojson, name=name, **kwargs)
