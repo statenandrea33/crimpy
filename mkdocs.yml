@@ -50,7 +50,7 @@ nav:
     - Report Issues: https://github.com/statenandrea33/crimpy/issues
     - Examples:
         - examples/intro.ipynb
-        - examples/foliumap.ipynb
+        - examples/folium.ipynb
         - examples/ipyleaflet.ipynb
         - examples/crimpy.ipynb
         - examples/key_features.ipynb
