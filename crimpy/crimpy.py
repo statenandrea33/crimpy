@@ -190,7 +190,7 @@ class Map(ipyleaflet.Map):
 
 #### NOT COMPLETE ####
 # Add an Image Function
-    def add_image(self, url, width, height, position = 'bottomleft')
+    def add_image(self, url, width, height, position = 'bottomleft'):
         """Add an image to the map.
 
         Args:
