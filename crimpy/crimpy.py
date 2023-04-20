@@ -188,6 +188,23 @@ class Map(ipyleaflet.Map):
             bbox = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
             self.fit_bounds(bbox)
 
+#### NOT COMPLETE ####
+# Add an Image Function
+    def add_image(self, url, width, height, position = 'bottomleft')
+        """Add an image to the map.
+
+        Args:
+            url (str): The URL of the image.
+            width (int): The width of the image.
+            height (int): The height of the image.
+        """
+        from ipyleaflet import WidgetControl
+        import ipywidgets as widgets
+
+        widget = widgets.HTML(value = f'<img src="{url}" width="{width}" height="{height}">')
+        control = WidgetControl(widget=widget, position=position)
+        self.add(control)
+
 # Add Locations to Map Function
     def add_locations_to_map(self, locations):
         """Takes coordinates from a list called locations and creates points on a map.
