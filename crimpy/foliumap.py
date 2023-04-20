@@ -61,4 +61,6 @@ class Map(folium.Map):
         import geopandas as gpd
         gdf = gpd.read_file(data)
         geojson = gdf.__geo_interface__
+        minx, miny, maxx, maxy = gdf.total_bounds
+        self.location = [(miny + maxy) / 2, (minx + maxx) / 2]
         self.add_geojson(geojson, name=name, **kwargs)
