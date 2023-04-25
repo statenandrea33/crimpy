@@ -64,3 +64,5 @@ class Map(folium.Map):
         minx, miny, maxx, maxy = gdf.total_bounds
         self.location = [(miny + maxy) / 2, (minx + maxx) / 2]
         self.add_geojson(geojson, name=name, **kwargs)
+
+# Add 

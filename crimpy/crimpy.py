@@ -188,7 +188,6 @@ class Map(ipyleaflet.Map):
             bbox = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
             self.fit_bounds(bbox)
 
-#### NOT COMPLETE ####
 # Add an Image Function
     def add_image(self, url, width, height, position = 'bottomleft'):
         """Add an image to the map.
@@ -205,6 +204,24 @@ class Map(ipyleaflet.Map):
         control = WidgetControl(widget=widget, position=position)
         self.add(control)
 
+# Add a dropdown Function
+    def add_dropdown(self, options=["Landsat", "Sentinel", "MODIS"], value=None, description="Satellite:", style={"description_width": "initial"}):
+        """Add a dropdown widget to the map.
+
+        Args:
+            options (list, optional): A list of the dropdown options. Defaults to ["Landsat", "Sentinel", "MODIS"].
+            value ([type], optional): The default value of the dropdown. Defaults to None.
+            description (str, optional): The description of the dropdown. Defaults to "Satellite:".
+            style (dict, optional): The style of the dropdown. Defaults to {"description_width": "initial"}.
+            layout (widgets.Layout, optional): The layout of the dropdown. Defaults to widgets.Layout(width="250px").
+        """
+        from ipyleaflet import WidgetControl
+        import ipywidgets as widgets
+
+        dropdown = widgets.Dropdown(options=options, value=value, description=description, style=style)
+        control = WidgetControl(widget=dropdown, position='topright')
+        self.add_control(control)
+    
 # Add Locations to Map Function
     def add_locations_to_map(self, locations):
         """Takes coordinates from a list called locations and creates points on a map.
