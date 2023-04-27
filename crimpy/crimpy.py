@@ -3,7 +3,6 @@
 import string
 import random
 import ipyleaflet
-import geosdemo
 
 class Map(ipyleaflet.Map):
 # Init Function
