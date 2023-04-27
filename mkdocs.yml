@@ -56,6 +56,7 @@ nav:
         - examples/key_features.ipynb
         - examples/raster.ipynb
         - examples/images.ipynb
+        - examples/toolbar.ipynb
     - API Reference:
           - crimpy module: crimpy.md
           - folium module: folium.md
