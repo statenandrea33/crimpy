@@ -3,6 +3,7 @@
 import string
 import random
 import ipyleaflet
+import csv
 
 class Map(ipyleaflet.Map):
 # Init Function
@@ -300,8 +301,8 @@ class Map(ipyleaflet.Map):
 
         self.add_control(toolbar_ctrl)
 
-
-# Add Locations to Map Function
+    
+# Add Locations to Map Function via Coordinates
     def add_locations_to_map(self, locations):
         """Takes coordinates from a list called locations and creates points on a map.
 
@@ -333,3 +334,28 @@ class Map(ipyleaflet.Map):
 
         # Set the center
         self.center = (center_lat, center_lon)
+
+# Add Locations to Map Function via CSV File
+    import pandas as pd
+
+    def plot_location_on_map(self, csv_file):
+        """Takes a CSV file and plots the locations on a map.
+        
+        Args:
+            csv_file (str): The path to the CSV file.
+        """
+
+        
+        locations = []
+
+        with open(csv_file, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)  # skip header row
+            for row in reader:
+                location = {
+                    'name': row[1],
+                    'latitude': float(row[9]),
+                    'longitude': float(row[10])
+                }
+                locations.append(location)
+        self.add_locations_to_map(locations)
