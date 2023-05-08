@@ -1,6 +1,6 @@
 # Installation
 
-## Stable release
+## Install from PyPI
 
 To install crimpy, run this command in your terminal:
 
