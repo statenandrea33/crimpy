@@ -7,9 +7,9 @@
 
 **A python package for interactive mapping and visualizing areas of interest.**
 
--   GitHub Repo: (https://github.com/statenandrea33/crimpy)
--   Documentation: (https://statenandrea33.github.io/crimpy)
--   PyPI: (https://pypi.org/project/crimpy/)
+-   GitHub Repo: <https://github.com/statenandrea33/crimpy>
+-   Documentation: <https://statenandrea33.github.io/crimpy>
+-   PyPI: <https://pypi.org/project/crimpy/>
 -   Crimpy Tutorial: in progress
 -   Free software: MIT license
     
