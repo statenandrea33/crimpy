@@ -2,7 +2,8 @@
 
 
 [![image](https://img.shields.io/pypi/v/crimpy.svg)](https://pypi.python.org/pypi/crimpy)
-[![image](https://img.shields.io/conda/vn/conda-forge/crimpy.svg)](https://anaconda.org/conda-forge/crimpy)
+[![image](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/statenandrea33/crimpy/blob/main/docs/examples/key_features.ipynb)
+
 
 
 **A python package for interactive mapping and visualizing areas of interest.**
