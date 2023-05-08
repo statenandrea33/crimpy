@@ -49,15 +49,14 @@ nav:
     - Changelog: changelog.md
     - Report Issues: https://github.com/statenandrea33/crimpy/issues
     - Examples:
-        - examples/intro.ipynb
         - examples/folium.ipynb
         - examples/ipyleaflet.ipynb
-        - examples/crimpy.ipynb
+        - examples/locations_list.ipynb
         - examples/key_features.ipynb
-        - examples/raster.ipynb
+        - examples/raster_data.ipynb
         - examples/images.ipynb
-        - examples/toolbar.ipynb
-        - examples/uploadcsv.ipynb
+        - examples/add_toolbar.ipynb
+        - examples/upload_csv.ipynb
     - API Reference:
           - crimpy module: crimpy.md
           - folium module: folium.md

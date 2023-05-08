@@ -10,7 +10,7 @@
 -   GitHub Repo: https://github.com/statenandrea33/crimpy
 -   Documentation: https://statenandrea33.github.io/crimpy
 -   PyPI: https://pypi.org/project/crimpy/
--   Crimpy Tutorial: 
+-   Crimpy Tutorial: in progress
 -   Free software: MIT license
     
 
