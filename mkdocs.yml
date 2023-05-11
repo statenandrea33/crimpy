@@ -57,6 +57,7 @@ nav:
         - examples/images.ipynb
         - examples/add_toolbar.ipynb
         - examples/upload_csv.ipynb
+        - examples/finalexam.ipynb
     - API Reference:
           - crimpy module: crimpy.md
           - folium module: folium.md
