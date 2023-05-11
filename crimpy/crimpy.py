@@ -8,7 +8,6 @@ import pandas as pd
 import geopandas as gpd
 import ipywidgets as widgets
 from IPython.display import display
-from ipyfilechooser import FileChooser
 
 class Map(ipyleaflet.Map):
 # Init Function
