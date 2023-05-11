@@ -4,6 +4,11 @@ import string
 import random
 import ipyleaflet
 import csv
+import pandas as pd
+import geopandas as gpd
+import ipywidgets as widgets
+from IPython.display import display
+from ipyfilechooser import FileChooser
 
 class Map(ipyleaflet.Map):
 # Init Function
@@ -303,7 +308,7 @@ class Map(ipyleaflet.Map):
 
     
 # Add Locations to Map Function via Coordinates
-    def add_locations_to_map(self, locations):
+    #def add_locations_to_map(self, locations):
         """Takes coordinates from a list called locations and creates points on a map.
 
         Args:
@@ -359,3 +364,119 @@ class Map(ipyleaflet.Map):
                 }
                 locations.append(location)
         self.add_locations_to_map(locations)
+
+### Final Exam ###
+## Question 1: CSV file to Shapefile/Geojson
+    
+    def csv_to_shp(in_csv, out_shp, **kwargs):
+        x = kwargs.get('x', 'longitude')
+        y = kwargs.get('y', 'latitude')
+        # Read CSV file using pandas
+        df = pd.read_csv(in_csv)
+    
+        # Create GeoDataFrame with Point geometries
+        geometry = gpd.points_from_xy(df[x], df[y])
+        gdf = gpd.GeoDataFrame(df, geometry=geometry)
+    
+        # Convert GeoDataFrame to Shapefile
+        gdf.to_file(out_shp, driver='ESRI Shapefile')
+        print('Shapefile created successfully!')
+    
+    def csv_to_geojson(in_csv, out_geojson, x="longitude", y="latitude"):
+        # Read CSV file using pandas
+        df = pd.read_csv(in_csv)
+    
+        # Create GeoDataFrame with Point geometries
+        geometry = gpd.points_from_xy(df[x], df[y])
+        gdf = gpd.GeoDataFrame(df, geometry=geometry)
+    
+        # Convert GeoDataFrame to GeoJSON
+        gdf.to_file(out_geojson, driver='GeoJSON')
+        print('GeoJSON created successfully!')
+    
+
+## Question 2: Add Locations to Map Function via CSV File
+       
+    def add_points_from_csv(self,in_csv,x,y):
+            # x and y are the names for longitude and latitude respectively used by the csv
+            locations = []
+
+        # Create a marker cluster layer to group nearby markers
+            markertuple = ()
+            with open(in_csv, newline='') as csvfile:
+                reader = csv.reader(csvfile)
+                next(reader)  # skip header row
+                for row in reader:
+                    location = {
+                        'latitude': float(row[y]),
+                        'longitude': float(row[x])
+                    }
+                    locations.append(location)
+                
+            # Loop through the list of locations and add a marker for each one
+            for location in locations:
+                # Extract the latitude and longitude from the list
+                lat, lon = location['latitude'], location['longitude']
+       
+                # Create a new marker at the location and add it to the layer
+
+                marker = ipyleaflet.Marker(location=(lat,lon))
+                markertuple = markertuple + (marker)
+
+            marker_cluster = ipyleaflet.MarkerCluster(markertuple)
+            self.add_layer(marker_cluster)
+
+## Question 3: Add a tool to the toolbar that allows users
+
+    def create_marker_cluster(self):
+        # File selection widget
+        file_selector = FileChooser()
+        file_selector.title = 'Select CSV File'
+        file_selector.default_path = '~/'
+        file_selector.filter_pattern = '*.csv'
+    
+        # Display the file selection widget
+        display(file_selector)
+    
+        # Button for marker cluster creation
+        create_button = widgets.Button(description='Create Marker Cluster')
+        display(create_button)
+    
+        # Output widget for status messages
+        output = widgets.Output()
+        display(output)
+    
+        # Function to handle button click event
+        def create_cluster(button):
+            output.clear_output()
+        
+            # Get the selected file path
+            file_path = file_selector.selected
+    
+            if file_path:
+                with output:
+                    try:
+                        # Read CSV file using pandas
+                        df = pd.read_csv(file_path)
+                    
+                        # Create GeoDataFrame with Point geometries
+                        geometry = gpd.points_from_xy(df['longitude'], df['latitude'])
+                        gdf = gpd.GeoDataFrame(df, geometry=geometry)
+                    
+                        # Display the GeoDataFrame
+                        display(gdf.head())
+                    
+                        # Perform marker clustering or further processing here
+                        # ...
+                    
+                        print('Marker cluster created successfully!')
+                    except Exception as e:
+                        print(f'Error: {e}')
+            else:
+                with output:
+                    print('Please select a CSV file.')
+
+        # Link the button click event to the function
+        create_button.on_click(create_cluster)
+
+
