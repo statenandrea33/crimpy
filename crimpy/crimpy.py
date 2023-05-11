@@ -307,7 +307,7 @@ class Map(ipyleaflet.Map):
 
     
 # Add Locations to Map Function via Coordinates
-    #def add_locations_to_map(self, locations):
+    def add_locations_to_map(self, locations):
         """Takes coordinates from a list called locations and creates points on a map.
 
         Args:
