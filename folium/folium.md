@@ -1,0 +1,4 @@
+
+# folium module 
+
+::: crimpy.foliumap
